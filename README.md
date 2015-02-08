@@ -7,11 +7,18 @@
 
 ## Installation and setup
 
-More instructions coming soon.
+Download the zip or clone the repo then place then place the contents in a folder on your dive. I recommend your dropbox folder so you have access across devices.
 
-Will include directions on how to create bash_profile alias commands.
+Open the basher_config.cfg in your text editor and fill in the variables listed.
 
+You must execute ```$ bash basher.sh``` from it's directory or use an alias to execute it anywhere.
 
+To start Basher with an alias, add this line to your .bash_profile. Call the alias whatever you like.
+```alias basher='bash ~/directory/to/basher.sh'```
+
+Run ```$ bash basher.sh -test``` to get started.
+
+Further examples will be shown using the alias 'basher'.
 
 ## Usage
 
@@ -54,7 +61,7 @@ Code examples coming soon
 
 
 ## Change Log
-### current v1
+### current v1.0
 
 #### Ready for public release
 * Moved to a function based script.
