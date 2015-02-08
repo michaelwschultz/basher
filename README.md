@@ -1,30 +1,37 @@
 # Basher
+##### Your git/apache piping robot ![basherlogo](http://cl.ly/Zh0J/basher-logo-small.jpg)
 
 
-> Basher takes the hassle out of setting up directories for a new project. Automatically generates both local and remote git repositories, links them and sends out your first push. Magic.
+> Removes the hassle of piping setup for new web projects. By automatically generating both local and remote git repositories, Basher removes 99% of the steps necessary for getting your site online. Once that's done Basher links these directories and sends out your first push. Magic.
 
+
+## Usage
+
+Basher is currently built to handle a single workflow. One that uses Git for version control and Apache servers for hosting multiple sites. If this sounds like you then Basher's your new best friend.
+
+By default, Basher will ask for a new domain name (.com, .net, .org). Once you confirm the name, a local and two remote directories will be created each with a git repo initialized and linked.
+
+>  You can read more about why two git repos are a good idea [here](http://git-scm.com/book/en/v2/Git-on-the-Server-Getting-Git-on-a-Server).
+
+Next, a new virtual host file is created in Apache and your server is restarted to account for the change. If all goes as planned, you can visit your new site immediately (assuming you already have DNS for the domain pointing to your server).
+
+To make updates to your site, simply push from your local directory to have changes go live immediately.
 
 
 ## Installation and setup
 
 Download the zip or clone the repo then place then place the contents in a folder on your dive. I recommend your dropbox folder so you have access across devices.
 
-Open the basher_config.cfg in your text editor and fill in the variables listed.
+Be sure to open the basher_config.cfg file before you head to the terminal and fill out all the variables listed. Once that's done run ```$ bash basher.sh -test``` to check your work. Basher will let you know if something is amiss.
 
 You must execute ```$ bash basher.sh``` from it's directory or use an alias to execute it anywhere.
 
 To start Basher with an alias, add this line to your .bash_profile. Call the alias whatever you like.
 ```alias basher='bash ~/directory/to/basher.sh'```
 
-Run ```$ bash basher.sh -test``` to get started.
+Run ```$ bash basher.sh``` or use your alias to get started.
 
 Further examples will be shown using the alias 'basher'.
-
-## Usage
-
-Basher is currently built to handle a single workflow. One that uses Git for version control and Apache servers for hosting multiple sites. If this sounds like you then Basher's your new best friend.
-
-Be sure to open the basher_config.cfg file before you head to the terminal and fill out your server info. Once that's done run ```$ basher -test``` to check your work. Basher will let you know if something is amiss.
 
 
 #### Terminal Commands
@@ -55,7 +62,7 @@ Interested in helping develop Basher further? Killer, hit me up on Twitter [@mic
 
 
 ```bash
-Code examples coming soon
+Need some examples? Let me know what I should put here.
 ```
 
 
@@ -63,7 +70,7 @@ Code examples coming soon
 ## Change Log
 ### current v1.0
 
-#### Ready for public release
+##### Ready for public release
 * Moved to a function based script.
 * Configuration file allows for general use.
 * More robust error handling for local and SSH processes.
