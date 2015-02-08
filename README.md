@@ -56,10 +56,8 @@ Code examples coming soon
 ## Change Log
 ### current v1
 
-
-
 #### Ready for public release
 * Moved to a function based script.
-* More robust error handling for SSH processes.
+* Configuration file allows for general use.
+* More robust error handling for local and SSH processes.
 * Adds Apache virtual hosts support.
-* Adds
