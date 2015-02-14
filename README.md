@@ -2,12 +2,12 @@
 ##### Your git/apache piping robot ![basherlogo](http://cl.ly/Zh0J/basher-logo-small.jpg)
 
 
-> Removes the hassle of piping setup for new web projects. By automatically generating both local and remote git repositories, Basher removes 99% of the steps necessary for getting your site online. Once that's done Basher links these directories and sends out your first push. Magic.
+> Basher removes the hassle of piping setup for new web projects. By automatically generating both local and remote git repositories, Basher removes 99% of the steps necessary for getting your site online. Once that's done, Basher links these directories and sends out your first push. Magic.
 
 
 ## Usage
 
-Basher is currently built to handle a single workflow. One that uses Git for version control and Apache servers for hosting multiple sites. If this sounds like you then Basher's your new best friend.
+Basher is currently built to handle a single workflow - one that uses Git for version control and Apache servers for hosting multiple sites. If this sounds like you, then Basher's your new best friend.
 
 By default, Basher will ask for a new domain name (.com, .net, .org). Once you confirm the name, a local and two remote directories will be created each with a git repo initialized and linked.
 

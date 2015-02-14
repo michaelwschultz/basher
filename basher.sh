@@ -213,17 +213,17 @@ function build_remote_directory {
       git init
       git remote add origin ${REPOS_DIRECTORY}/${SITENAME}.git
 
-      echo -e '<VirtualHost *:80>
+      sudo echo -e '<VirtualHost *:80>
         ServerAdmin admin@$SITENAME
         ServerName $SITENAME
         ServerAlias www.$SITENAME
         DocumentRoot ${SITES_DIRECTORY}/$SITENAME
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
-      </VirtualHost>' >> ${SITES_AVAILABLE}/${SITENAME}.conf
+      </VirtualHost>' | sudo dd of=${SITES_AVAILABLE}/${SITENAME}.conf
 
-      a2ensite ${SITENAME}.conf >> /dev/null 2>&1
-      service apache2 restart
+      sudo a2ensite ${SITENAME}.conf >> /dev/null 2>&1
+      sudo service apache2 restart
     " # end remote SSH work
   fi
 
@@ -258,9 +258,9 @@ function remove_directory_from_server {
       rm -rf ${REPOS_DIRECTORY}/${SITENAME}.git/
       rm -rf ${SITES_DIRECTORY}/${SITENAME}/
 
-      rm ${SITES_AVAILABLE}/${SITENAME}.conf
-      rm ${SITES_ENABLED}/${SITENAME}.conf
-      service apache2 restart
+      sudo rm ${SITES_AVAILABLE}/${SITENAME}.conf
+      sudo rm ${SITES_ENABLED}/${SITENAME}.conf
+      sudo service apache2 restart
     "
   else
     ssh $SERVER_ADDRESS "
@@ -298,6 +298,7 @@ function local_setup {
   timportant "\nBasher: Initial commit pushed to server.\n"
 
   open $LOCAL_DIRECTORY/$SITENAME/
+  open "http://${SITENAME}"
 }
 
 function finish_message {
