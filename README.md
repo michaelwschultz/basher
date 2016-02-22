@@ -48,10 +48,10 @@ including local and remote site directories and apache virtual hosts.
 ##### $ basher -remove or -r
 > ```$ basher -remove``` to remove a remote directory.
 
-##### $ basher -subdirectory or -sub or -s
-> ```$ basher -subdirectory``` to start a new sub-directory project without apache configuration.
+##### $ basher -subdomain or -sub or -s
+> ```$ basher -subdomain``` to add a subdomain to an existing domain.
 
-> example: 100.100.100.10/newsubdirectory
+> example: subdomain.domain.com
 
 ##### $ basher -test or -t
 > ```$ basher -test``` to test your configuration file against your SSH.
@@ -68,9 +68,12 @@ Need some examples? Let me know what I should put here.
 
 
 ## Change Log
-### current v1.0
+### current v1.1
 
-##### Ready for public release
+##### Version 1.1
+* Adds support for subdomains.
+
+##### Version 1.0
 * Moved to a function based script.
 * Configuration file allows for general use.
 * More robust error handling for local and SSH processes.
