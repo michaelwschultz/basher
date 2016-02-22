@@ -37,7 +37,7 @@ function timportant() {
   MESSAGE=${@:-"${RESET}Error: No message passed"}
   echo -e "${COLOR}${MESSAGE}${RESET}"
 }
- 
+
 # Display colorized warning output
 function twarn() {
   COLOR=${TRED}
@@ -134,8 +134,8 @@ function begin_bashing {
       twarn "Please edit your ${DIR}/basher-config.cfg file manually."
   else
     echo -e ${TGREEN}'
-        ____  ___   _____ __  ____________ 
-       / __ )/   | / ___// / / / ____/ __ \ 
+        ____  ___   _____ __  ____________
+       / __ )/   | / ___// / / / ____/ __ \
       / __  / /| | \__ \/ /_/ / __/ / /_/ /
      / /_/ / ___ |___/ / __  / /___/ _, _/
     /_____/_/  |_/____/_/ /_/_____/_/ |_|\n'${TDEFAULT}
@@ -152,12 +152,19 @@ function ask_name {
   echo -e "\n"
 
   if [[ "$SUB_DIRECTORY" = true ]]; then
-    read -e -p "Basher: What do you want to call your new subdirectory? -> " SITENAME
+    read -e -p "Basher: What domain will you attach this subdomain to? (don't forget the .com) -> " SITENAME
+    read -e -p "Basher: What do you want to call your new subdirectory? -> " SUBDIRECTORYNAME
+
   else
     read -e -p "Basher: What's the domain name? (don't forget the .com) -> " SITENAME
   fi
 
-  echo -e "Ok, ${TGREEN}$SITENAME${TDEFAULT} it is.\n"
+  if [[ "$SUB_DIRECTORY" = true ]]; then
+    echo -e "Ok, ${TGREEN}$SUBDIRECTORYNAME.$SITENAME${TDEFAULT} it is.\n"
+  else
+    echo -e "Ok, ${TGREEN}$SITENAME${TDEFAULT} it is.\n"
+  fi
+
   read -n 1 -r -p "$1"
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     return 1;
@@ -176,22 +183,35 @@ function build_remote_directory {
     # SSH into server and create git enabled directories
     ssh $SERVER_ADDRESS "
       export SITENAME='${SITENAME}';
+      export SUBDIRECTORYNAME='${SUBDIRECTORYNAME}';
       cd $REPOS_DIRECTORY
-      mkdir ${SITENAME}.git
-      cd ${SITENAME}.git
+      mkdir ${SUBDIRECTORYNAME}.${SITENAME}.git
+      cd ${SUBDIRECTORYNAME}.${SITENAME}.git
       git init --bare
       cd hooks
       echo -e '#!/bin/sh
-      cd ${SITES_DIRECTORY}/${SITENAME}/
-      git --git-dir ${SITES_DIRECTORY}/${SITENAME}/.git pull origin master
+      cd ${SITES_DIRECTORY}/${SUBDIRECTORYNAME}.${SITENAME}/
+      git --git-dir ${SITES_DIRECTORY}/${SUBDIRECTORYNAME}.${SITENAME}/.git pull origin master
       ' >> post-receive
       chmod +x post-receive
 
       cd $SITES_DIRECTORY
-      mkdir $SITENAME
-      cd $SITENAME
+      mkdir ${SUBDIRECTORYNAME}.$SITENAME
+      cd ${SUBDIRECTORYNAME}.$SITENAME
       git init
-      git remote add origin ${REPOS_DIRECTORY}/${SITENAME}.git
+      git remote add origin ${REPOS_DIRECTORY}/${SUBDIRECTORYNAME}.${SITENAME}.git
+
+      echo -e '<VirtualHost $SUBDIRECTORYNAME.$SITENAME>
+        ServerAdmin admin@$SITENAME
+        ServerName $SUBDIRECTORYNAME.$SITENAME
+        ServerAlias www.$SUBDIRECTORYNAME.$SITENAME
+        DocumentRoot ${SITES_DIRECTORY}/$SUBDIRECTORYNAME.$SITENAME
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+      </VirtualHost>' >> ${SITES_AVAILABLE}/${SUBDIRECTORYNAME}.${SITENAME}.conf
+
+      a2ensite ${SUBDIRECTORYNAME}.${SITENAME}.conf >> /dev/null 2>&1
+      service apache2 restart
     "
   else
     # SSH into server and create git enabled directories
@@ -213,17 +233,17 @@ function build_remote_directory {
       git init
       git remote add origin ${REPOS_DIRECTORY}/${SITENAME}.git
 
-      sudo echo -e '<VirtualHost *:80>
+      echo -e '<VirtualHost *:80>
         ServerAdmin admin@$SITENAME
         ServerName $SITENAME
         ServerAlias www.$SITENAME
         DocumentRoot ${SITES_DIRECTORY}/$SITENAME
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
-      </VirtualHost>' | sudo dd of=${SITES_AVAILABLE}/${SITENAME}.conf
+      </VirtualHost>' >> ${SITES_AVAILABLE}/${SITENAME}.conf
 
-      sudo a2ensite ${SITENAME}.conf >> /dev/null 2>&1
-      sudo service apache2 restart
+      a2ensite ${SITENAME}.conf >> /dev/null 2>&1
+      service apache2 restart
     " # end remote SSH work
   fi
 
@@ -258,9 +278,9 @@ function remove_directory_from_server {
       rm -rf ${REPOS_DIRECTORY}/${SITENAME}.git/
       rm -rf ${SITES_DIRECTORY}/${SITENAME}/
 
-      sudo rm ${SITES_AVAILABLE}/${SITENAME}.conf
-      sudo rm ${SITES_ENABLED}/${SITENAME}.conf
-      sudo service apache2 restart
+      rm ${SITES_AVAILABLE}/${SITENAME}.conf
+      rm ${SITES_ENABLED}/${SITENAME}.conf
+      service apache2 restart
     "
   else
     ssh $SERVER_ADDRESS "
@@ -278,16 +298,41 @@ function remove_directory_from_server {
 function local_setup {
   timportant "Basher: Creating local directory...\n"
   cd $LOCAL_DIRECTORY
-  mkdir $SITENAME
-  cd $SITENAME
-  git init
-  git remote add origin ssh://${SERVER_ADDRESS}/${REPOS_DIRECTORY}/${SITENAME}.git
-  echo -e "${SITENAME} - created $(date)\n
-  Setup using @michaelschultz custom bash script,
-  http://github.com/michaelwschultz/basher
-  " >> README.md
+
+  if [[ "$SUB_DIRECTORY" = true ]]; then
+    mkdir $SUBDIRECTORYNAME.$SITENAME
+    cd $SUBDIRECTORYNAME.$SITENAME
+    git init
+    git remote add origin ssh://${SERVER_ADDRESS}/${REPOS_DIRECTORY}/${SUBDIRECTORYNAME}.${SITENAME}.git
+    echo -e "${SUBDIRECTORYNAME}.${SITENAME} - created $(date)\n
+    Setup using @michaelschultz custom bash script,
+    http://github.com/michaelwschultz/basher
+    " >> README.md
+  else
+    mkdir $SITENAME
+    cd $SITENAME
+    git init
+    git remote add origin ssh://${SERVER_ADDRESS}/${REPOS_DIRECTORY}/${SITENAME}.git
+    echo -e "${SITENAME} - created $(date)\n
+    Setup using @michaelschultz custom bash script,
+    http://github.com/michaelwschultz/basher
+    " >> README.md
+  fi
 
   timportant "\nBasher: Local directory created and linked.\n"
+
+# adds git-changelog to .git hooks
+  cd .git/hooks
+cat <<-EOF > post-commit
+#!/bin/sh
+#
+# Run git-changelog immediately after every commit
+source ~/Dropbox/Files/Applications/git-changelog.sh
+# End
+EOF
+  chmod +x post-commit
+  cd ../../
+# ends git-changelog insert
 
   git add .
   git commit -m"initial commit by Basher"
@@ -297,8 +342,12 @@ function local_setup {
 
   timportant "\nBasher: Initial commit pushed to server.\n"
 
-  open $LOCAL_DIRECTORY/$SITENAME/
-  open "http://${SITENAME}"
+  if [[ "$SUB_DIRECTORY" = true ]]; then
+    open $LOCAL_DIRECTORY/$SUBDIRECTORYNAME.$SITENAME/
+  else
+    open $LOCAL_DIRECTORY/$SITENAME/
+  fi
+
 }
 
 function finish_message {
@@ -332,7 +381,7 @@ case "$1" in
     echo -e "-subdirectory \t -s \tCreate a sub directory under a current domain."
     echo -e "\nReview the README.md or contact @michaelschultz on Twitter."
     echo -e "http://github.com/michaelwschultz/basher"
-    ;;  
+    ;;
   "-remove" | "-r")
     read_config
     remove_directory_from_server
