@@ -42,6 +42,9 @@ including local and remote site directories and apache virtual hosts.
 
 > example: yournewsite.com
 
+##### $ basher -domain or -d
+> ```$ basher -domain``` to setup a new domain directory on your server and update apache *without* git integration.
+
 ##### $ basher -help or -h
 > ```$ basher -help``` to get some basic help.
 
