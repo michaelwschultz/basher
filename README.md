@@ -71,7 +71,8 @@ Need some examples? Let me know what I should put here.
 
 
 ## Change Log
-### current v1.1
+### current v1.2
+* Adds support for domain names without git integration.
 
 ##### Version 1.1
 * Adds support for subdomains.
