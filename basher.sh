@@ -342,18 +342,21 @@ function local_setup {
 
   timportant "\nBasher: Local directory created and linked.\n"
 
-# adds git-changelog to .git hooks
+<<"COMMENT"
+# Replace source path and remove COMMENT to add git-changelog (optional)
+# https://github.com/michaelwschultz/Changelog-for-Git
+# start git-changelog
   cd .git/hooks
 cat <<-EOF > post-commit
 #!/bin/sh
-#
 # Run git-changelog immediately after every commit
-source ~/Dropbox/Files/Applications/git-changelog.sh
+source ~/path/to/git-changelog.sh
 # End
 EOF
   chmod +x post-commit
   cd ../../
-# ends git-changelog insert
+# ends git-changelog
+COMMENT
 
   git add .
   git commit -m"initial commit by Basher"
